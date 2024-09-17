@@ -18,6 +18,7 @@ export const friend = {
     REMOVE_USER : BASE_URL + "/friend/removeFriend/",
     PENDING_REQUEST : BASE_URL +"/friend/pendingFriendRequests",
     ALL_FRIENDS : BASE_URL + "/friend/getAllFriends",
+    RECOMMEND_USER : BASE_URL + "/friend/showRecommendations",
 
 
 

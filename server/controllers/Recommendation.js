@@ -51,17 +51,17 @@ exports.showRecommendations = async (req, res) => {
       }
   
       // Fetch the interests of the logged-in user
-      const userInterests = loggedInUser.interests || [];
+      const userInterests = loggedInUser.interest || [];
   
       // Find users with similar interests
       const interestBasedRecommendations = await User.find({
         _id: { $ne: loggedUserId }, // Exclude the logged-in user
-        interests: { $in: userInterests }, // Users with at least one similar interest
+        interest: { $in: userInterests }, // Users with at least one similar interest
       });
   
       // Filter out users who are already friends
       const nonFriendRecommendations = interestBasedRecommendations.filter(user =>
-        !loggedInUser.friends.includes(user.username)
+        !loggedInUser.friend_list.includes(user.username)
       );
   
       // Create a map to store the mutual friends count
@@ -102,10 +102,12 @@ exports.showRecommendations = async (req, res) => {
       const allRecommendations = [
         ...nonFriendRecommendations.map(user => ({
           username: user.username,
-          interests: user.interest,
+          
         })),
         ...resolvedMutualFriendsRecommendations.filter(user => user !== null)
       ];
+
+      console.log("allReco",allRecommendations)
   
       // Deduplicate recommendations by username
       const uniqueRecommendations = Array.from(new Set(allRecommendations.map(user => user.username)))
@@ -124,4 +126,4 @@ exports.showRecommendations = async (req, res) => {
         message: "Failed to fetch recommendations.",
       });
     }
-  };
+};

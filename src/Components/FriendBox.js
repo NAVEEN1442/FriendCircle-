@@ -3,13 +3,17 @@ import toast from 'react-hot-toast';
 import { FaCircle } from "react-icons/fa";
 import { FaTelegramPlane } from "react-icons/fa";
 import { useDispatch } from 'react-redux';
-import { sendRequestUSER, showAllFriends } from '../Services/operations/friend';
+import { sendRequestUSER, showAllFriends, showRecommendationsList } from '../Services/operations/friend';
 import FriendCard from './FriendCard';
+import RecommendCard from './RecommendCard';
 
 function FriendBox() {
 
   const [inputValue, setInputValue] = useState("");
   const [allFriends,setAllFriends] = useState([]);
+  const [recommended,setRecommended] = useState([]);
+
+  console.log(recommended)
 
   const dispatch = useDispatch();
 
@@ -22,6 +26,7 @@ function FriendBox() {
 
       console.log('username is:', friendUsername);
       dispatch(sendRequestUSER(friendUsername));
+    
       
     } catch (error) {
       console.log(error);
@@ -33,11 +38,17 @@ function FriendBox() {
     try {
       
       const response = await dispatch(showAllFriends());
+      const recommend = await dispatch(showRecommendationsList());
 
       console.log("response in the friendzz box",response);
+      console.log("recoo in the friendzz box",recommend);
 
       if(response){
         setAllFriends(response);
+      }
+      if(recommend){
+        
+        setRecommended(recommend);
       }
 
 
@@ -81,9 +92,19 @@ function FriendBox() {
             <div className='h-[3px] w-10/12 bg-gray-600'></div>
           </div>
 
-          <div>
+          <div className=' h-[80px] text-[black] mt-3 w-[100%] ' >
             {// Recommended cards yha aayenge
             }
+
+            
+              {
+                recommended.length > 0 ? recommended.map((item,index)=>(
+                  <RecommendCard name={item} key={index} />
+                )) : <p>No Recommendations</p>
+
+              }
+
+
           </div>
         </div>
       </div>

@@ -12,6 +12,7 @@ const {
     REMOVE_USER ,
     PENDING_REQUEST,
     ALL_FRIENDS,
+    RECOMMEND_USER,
 } = friend
 
 
@@ -256,5 +257,70 @@ export function pendingFriendRequests() {
       }
     };
   }
+
+  export function showRecommendationsList() {
+    return async (dispatch, getState) => {
+      const toastId = toast.loading("Loading...");
+      dispatch(setLoading(true));
+  
+      try {
+        // Retrieve token from Redux auth slice
+        const token = getState().auth.token;  // Adjust the path based on your actual Redux structure
+        // console.log("token",token);
+  
+        if (!token) {
+          toast.error("Login To View Friends");
+          throw new Error("Token is Authorization");
+          
+        }
+
+      
+  
+        // Setting headers with Authorization token
+        const headers = { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` 
+        };
+  
+        // Pass the username in the correct format based on your API's requirement
+        const response = await apiConnector("GET", RECOMMEND_USER , {  }, headers);
+        
+
+        
+        const result = response?.data;
+
+        console.log("res reco",result)
+        if (!result.success) {
+          throw new Error(result.message);
+        }
+
+        const reco = result?.recommendations?.map(item => item.username);
+
+        console.log("reco,",reco)
+  
+        // Process the successful response as needed
+        // console.log("Pending friend box data:", result);
+        // console.log("Pending friend box requests:", result.allFriends);
+        // console.log(result.allFriends);
+        const returnData = result.recommendations;
+
+      
+
+        return reco;
+  
+      
+      } catch (error) {
+          console.error("Error fetching friends :",error);
+       
+         
+        
+        
+      } finally {
+        dispatch(setLoading(false));
+        toast.dismiss(toastId);
+      }
+    };
+  }
+  
  
 
